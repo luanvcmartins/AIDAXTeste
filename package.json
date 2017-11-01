@@ -1,0 +1,19 @@
+{
+  "name": "aidaxteste",
+  "version": "1.0.0",
+  "description": "Testing basic AIDAX functionality",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "(git://github.com/luanvcmartins/AIDAXTeste.git)"
+  },
+  "keywords": [
+    "AIDAX",
+    "Teste"
+  ],
+  "author": "luanvcmartins",
+  "license": "ISC"
+}

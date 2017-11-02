@@ -4,11 +4,14 @@
   "description": "Testing basic AIDAX functionality",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": ""
   },
   "repository": {
     "type": "git",
-    "url": "(git://github.com/luanvcmartins/AIDAXTeste.git)"
+    "url": "https://github.com/luanvcmartins/AIDAXTeste.git"
+  },
+  "dependencies": {
+    "express": "4.x"
   },
   "keywords": [
     "AIDAX",

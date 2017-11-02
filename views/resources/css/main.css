@@ -1,0 +1,41 @@
+body{
+	font-family: 'Roboto', sans-serif;
+	background-color: '#f1f1f1';
+	margin: 0px;
+}
+
+.fileover{
+	transition: 1s;
+	background-color: #c9cacc;
+}
+
+.titlescreen {
+	width: 400px;
+	height: 150px;
+
+	position:absolute; 
+	left:0; right:0;
+	top:0; bottom:0;
+	margin:auto;
+	max-width:100%;
+	max-height:100%;
+	overflow:auto;
+}
+	
+.titlescreen h4,h5{
+	text-align: center;
+}
+
+.dropzone{
+	position: absolute;
+	
+	height: 100%;
+	width: 100%;
+	cursor:pointer;
+}
+
+.fixed-action-btn{
+	position:relative;
+	margin-top:10px;
+	margin-left:10px;
+}

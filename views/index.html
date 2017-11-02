@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>AIDAX Teste</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.11.2/sweetalert2.css" rel="stylesheet">
+		
+		<link href="resources/css/main.css" rel="stylesheet">
+	</head>
+	<body>
+		<main class="dropzone">
+			<noscript>
+				<div style="position: fixed; bottom: 20px">
+					<h4>Sorry, but we really need JavaScript for this.</h4>
+					<p>Please, enable it by clicking on the "info" icon next to the site URL.</p>
+				</div>
+			</noscript>
+			
+			<article>
+			<div class="titlescreen">
+			<h4>AIDAX Test</h4>
+			<h5>Click anywhere or drop the file here to upload.</h5>
+			</div>
+			</article>
+		</main>
+		<input id="file" type="file" name="file" style="display: none;" />
+		<div id="modal" class="modal bottom-sheet">
+				<div class="modal-content">
+					
+					<div class="container">
+					<div class="row">
+						<div class="col s2">
+							<h4>Import options</h4>
+							<p id="filename"></p>
+						</div>
+						<div class="col s6">
+							<div class="input-field">
+								<select id="delimiter">
+									<option value=","  selected>COMMA ( , )</option>
+									<option value=";">SEMICOLON ( ; )</option>
+									<option value="|">PIPE ( | )</option>
+									<option value="\t">TAB ( \t )</option>
+								</select>
+								<label>Property delimiter</label>
+							</div>
+							<p>
+							  <input type="checkbox" id="header" checked="checked" />
+							  <label for="header">Use the first line as a header to identify the properties.</label>
+							</p>
+							<br>
+							<div class="input-field">
+								<select id="type">
+									<option value="client" selected>Client-side</option>
+									<option value="server" disabled>Server-side</option>
+								</select>
+								<label>Import on...</label>
+							</div>
+						</div>
+						<div class="col s4">
+							<p>Theme is <a target="_blank" href="http://materializecss.com">Materilize.css</a></p>
+							<hr>
+							<p>Alerts by <a target="_blank" href="https://limonte.github.io/sweetalert2/">SweetAlert2</a>.</p>
+						</div>
+					</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+				  <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat btn-import" style="color: red;">Import file</a>
+				</div>
+		  </div>
+		<script type="text/javascript" id="script">
+		var AIDAX_CLIENT_KEY="7a2dd668-3293-4282-9378-30b337a3c5f3",
+		cookie_enabled=function(){return document.cookie="tcax",-1!==document.cookie.indexOf("tcax")};window.ax=window.ax||function(){return window.ax.factory("event").apply(this,arguments)},window.ax.methods=["on","once","user","query","session","event","delete_tags","increment","whois","ready","toggle_debug"],window.ax._container=[],window.ax.factory=function(e){return function(){var t=Array.prototype.slice.call(arguments);return window.ax._container.unshift({method:e,args:t}),window.ax}};var cookie={set:function(e,t,r,i,n){var o=new Date,a="",c=typeof t,s="",d="";i=i||"/",r&&(o.setTime(o.getTime()+24*r*60*60*1e3),a="; expires="+o.toUTCString()),s="object"===c&&"undefined"!==c?encodeURIComponent(JSON.stringify({v:t})):encodeURIComponent(t),n&&(d="; secure"),document.cookie=e+"="+s+a+"; path="+i+d},get:function(e){for(var t=e+"=",r=document.cookie.split(";"),i="",n="",o={},a=0;a<r.length;a++){for(var c=r[a];" "==c.charAt(0);)c=c.substring(1,c.length);if(0===c.indexOf(t)){if(i=decodeURIComponent(c.substring(t.length,c.length)),n=i.substring(0,1),"{"==n)try{if(o=JSON.parse(i),"v"in o)return o.v}catch(s){return i}if("undefined"==i)return;return i}}return null},remove:function(e){this.set(e,"",-1)}};window.ax.is_unique=function(){return!cookie.get("aidax_unique")},window.ax.clear_ab=function(e){if(e){if("string"==typeof e&&""!==e){var t=cookie.get("aidax_ab");if(t){var r=JSON.parse(t);delete r[e],cookie.set("aidax_ab",JSON.stringify(r),3,"/")}}}else cookie.remove("aidax_ab")},window.ax.ab=function(e,t){if("string"==typeof e&&""===e&&"object"==typeof t&&Array.isArray(t)){var r,i=cookie.get("aidax_ab"),n={},o=function(e,t){return Math.floor(Math.random()*(t-e+1))+e},a=function(){var i,a,c=[],s=0,d=0;if(Array.isArray(t))r=t[Math.floor(Math.random()*t.length)];else{for(var u in t)t.hasOwnProperty(u)&&(c.push([u,[0===d?d:d+1,r[u]+d]]),d=r[u],s+=+r[u]);for(a=o(0,s),c.sort(function(e,t){return e[1]-t[1]}),i=0;i<c.length;i++)if(a>=c[i][1][0]&&a<=c[i][1][1]){r=c[i][0];break}}n[e]=r};if(i){if(n=JSON.parse(i),n[e])return n[e];a()}else a();return cookie.set("aidax_ab",JSON.stringify(n),30,"/"),r}throw"[AIDAX] Missing ab parameters."};for(var i=0;i<window.ax.methods.length;i++){var method=window.ax.methods[i];window.ax[method]=window.ax.factory(method)}var script=document.createElement("script");script.type="text/javascript",script.async=!0,script.src="//api.aidax.com.br/aidax.js";var firstScript=document.getElementsByTagName("script")[0];firstScript.parentNode.insertBefore(script,firstScript);
+		</script>
+		<script src="./resources/js/jquery-3.2.1.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.11.2/sweetalert2.all.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+		<script src="./resources/js/main.js"></script>
+	</body>
+</html>

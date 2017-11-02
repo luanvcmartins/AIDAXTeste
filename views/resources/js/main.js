@@ -1,6 +1,7 @@
 $(function() {
 	//We need to call this function on jQuery's "ready" so the Materialize.css's modal works:
 	$('.modal').modal();
+	$('select').material_select();
 	
 	ax.ready(function(){
 		//alert("AIDAX is ready.");
@@ -19,7 +20,8 @@ $(function() {
 		 */
 		fileImportVerifier = function(csvFile){
 			//We need to check if the file is of the expected type. Apps can change this so it's not a very secure way of doing it, but it works in this case:
-			if (csvFile.type !== 'application/vnd.ms-excel'){
+			
+			if (csvFile.name.includes(".csv") === false){
 				swal('Sorry, we only accept .csv files','The file you uploaded was not in the expected extension (application/vnd.ms-excel).','error').catch(swal.noop);
 				return false;
 			}
@@ -46,7 +48,7 @@ $(function() {
 		 *
 		 * csvFile: the file the user selected.
 		 */
-		importData = function(csvFile){
+		importDataClientSide = function(csvFile){
 
 			var reader = new FileReader();
 			
@@ -73,10 +75,10 @@ $(function() {
 			reader.onload = function(progressEvent){
 				$("#txt").text("Importing users");
 				$("#pImporting").css("width", "0%");
+				
 				//We can do this client side, but it's not very effective as the whole file must be loaded into memory before processing.
 				//There are some JS alternatives to this capable of reading chucks of the file (lines) individually, but this will work 
 				//just fine for this purpose:
-				
 				var lines = this.result.split('\n'),
 					attr = [],
 					delimiter = $("#delimiter").val(),
@@ -101,7 +103,7 @@ $(function() {
 					if (line == 0 && header === true){ 
 						attr = content;
 						continue;
-					}
+					} 
 					
 					
 					var userProperties = {};
@@ -113,11 +115,11 @@ $(function() {
 					}
 					
 					//Using the first property as a id we can add the user calling this AIDAX function:
+					
 					ax.user({
 						id:content[0],
 						properties : userProperties
 					});
-					
 					
 					$("#pImporting").css("width", (lines.length / line * 100)+"%");
 				}
@@ -127,6 +129,57 @@ $(function() {
 			
 			//Let's read the file as text:
 			reader.readAsText(selectedFile);
+			selectedFile = undefined;
+		}, 
+		
+		/**
+		 * This function is used to process the file on the server side, to do this
+		 * we must upload the file and 
+		 */
+		importDataServerSide = function (csvFile){
+			swal({
+				title: "Importing users.",
+				showCancelButton: false,
+				html:"<span id='txt'>Uploading file.</span><br><div class='progress'><div id='pImporting' class='determinate' style='width: 0%'></div></div>",
+				useRejections: false,
+				allowOutsideClick: false,
+				allowEscapeKey: false,
+				allowEnterKey: false
+			});
+			
+			//This is the data we will submit to the server:
+			var formData = new FormData();
+			formData.append('csvFile', csvFile);
+			formData.append('header', $("#header").is(":checked"));
+			formData.append('delimiter', $("#delimiter").val());
+			
+			//We submit the form with Ajax:
+			$.ajax({
+				type: 'POST',
+				url: '/fileupload',
+				data: formData,
+				processData: false,
+				contentType: false,
+				xhr: function() {
+					var xhr = new window.XMLHttpRequest();
+					//We are going to attach a event to the progress event on the Ajax request so we can monitor the progress.
+					xhr.upload.addEventListener("progress", function(evt){
+							if (evt.lengthComputable) {
+								$("#pImporting").css("width",  evt.loaded / evt.total * 100 + "%");
+							}
+						}, false);
+					return xhr;
+				},
+			}).done(function(res){
+				console.log(res);
+				if (res.result){
+					swal("Success!", "The csv file was uploaded correctly and all users have been imported to AIDAX.", "success");
+				} else {
+					swal("Oops, something went wrong.", "Your file was uploaded correctly but we weren't able to import your data to AIDAX.", "error");
+				}
+			}).error(function(){
+				swal("Oops, something went wrong.", "Please check your internet connection and try again later.", "error");
+			});
 		},
 		
 		//A reference to the selected file.
@@ -161,14 +214,13 @@ $(function() {
 		dragleave: function (e) { noop(e);  $("main").removeClass("fileover"); } 
 	});
 	
-	$('select').material_select();
 	
 	$(".btn-import").on("click", function(){
 		//The user clicked the "import" button on the options' modal. We are going to import the data to AIDAX now:
 		if (selectedFile === undefined){
 			//This function should not be called if we don't have a reference to a file,
 			//so we tell the user that something unexpected happened:
-			swal("Oops, we don't know what to import.", "Please, select or drop the file again to continue.","error").catch(swal.noop);
+			swal("Oops, we don't know what to import.", "Please, select or drop the file again to continue.", "error").catch(swal.noop);
 		} else {
 			swal({
 				title: 'Are you sure you want to continue?',
@@ -177,7 +229,8 @@ $(function() {
 				reverseButtons:true,
 				type:'question'
 			}).then(function (result) {
-				importData(selectedFile);
+				if ($("#type").val() === 'client'){ importDataClientSide(selectedFile); } 
+				else { importDataServerSide(selectedFile); }
 			}).catch(swal.noop);
 		}
 	});

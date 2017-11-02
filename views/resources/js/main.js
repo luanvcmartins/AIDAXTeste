@@ -160,7 +160,9 @@ $(function() {
 		dragover: function (e) { noop(e); if ($("main").hasClass("fileover") === false) { $("main").addClass("fileover"); } },
 		dragleave: function (e) { noop(e);  $("main").removeClass("fileover"); } 
 	});
+	
 	$('select').material_select();
+	
 	$(".btn-import").on("click", function(){
 		//The user clicked the "import" button on the options' modal. We are going to import the data to AIDAX now:
 		if (selectedFile === undefined){

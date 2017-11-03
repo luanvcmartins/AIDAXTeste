@@ -10,4 +10,5 @@ Ferramenta web simples capaz de consumir um arquivo .csv com dados de usuários 
 ## Client-side
 Sempre tenho preferência em realizar qualquer trabalho do lado do cliente caso seja possível e seguro. Nessa tarefa em questão, em especial no requisito "Usar AIDAX client-side" é possível realizar todo trabalho do lado do cliente, sem realizar upload de arquivos ou processamento do servidor. 
 
-No futuro esse projeto será incrementado com a opção de realizar o upload do arquivo e ter o processamento do lado do servidor, possibilitando a avaliação e o treinamento de tarefas como upload e processamento de arquivos (leitura de arquivos, requisições http, etc.) com NodeJS.
+## Server-side
+Há também a opção de realizar o processamento do arquivo do lado do servidor, nesse caso deve ser feito o upload do arquivo para o servidor, que realiza o processo de enviar os dados para a AIDAX através de requisições HTTP (curl).

@@ -30,19 +30,34 @@
 					
 					<div class="container">
 					<div class="row">
-						<div class="col s2">
+						<div class="col m2">
 							<h4>Import options</h4>
 							<p id="filename"></p>
 						</div>
-						<div class="col s6">
-							<div class="input-field">
-								<select id="delimiter">
-									<option value=","  selected>COMMA ( , )</option>
-									<option value=";">SEMICOLON ( ; )</option>
-									<option value="|">PIPE ( | )</option>
-									<option value="\t">TAB ( \t )</option>
-								</select>
-								<label>Property delimiter</label>
+						<div class="col m6">
+							<div class="row">
+								<div class="col m6">
+									<div class="input-field">
+										<select id="delimiter">
+											<option value=","  selected>COMMA ( , )</option>
+											<option value=";">SEMICOLON ( ; )</option>
+											<option value="|">PIPE ( | )</option>
+											<option value="\t">TAB ( \t )</option>
+										</select>
+										<label>Property delimiter</label>
+									</div>
+								</div>
+								<div class="col m6">
+									<div class="input-field">
+										<select id="speed">
+											<option value="30" selected>Fast (50MS)</option>
+											<option value="100" selected>Slow (100MS)</option>
+											<option value="500">Half a second (500MS)</option>
+											<option value="1000">Takes forever (1S)</option>
+										</select>
+										<label>Import speed</label>
+									</div>
+								</div>
 							</div>
 							<p>
 							  <input type="checkbox" id="header" checked="checked" />
@@ -52,15 +67,16 @@
 							<div class="input-field">
 								<select id="type">
 									<option value="client" selected>Client-side</option>
-									<option value="server" disabled>Server-side</option>
+									<option value="server">Server-side</option>
 								</select>
 								<label>Import on...</label>
 							</div>
+							
 						</div>
-						<div class="col s4">
+						<div class="col m4">
 							<p>Theme is <a target="_blank" href="http://materializecss.com">Materialize.css</a></p>
 							<hr>
-							<p>Alerts by <a target="_blank" href="https://limonte.github.io/sweetalert2/">SweetAlert2</a>.</p>
+							<p>Alerts by <a target="_blank" href="https://limonte.github.io/sweetalert2/">SweetAlert2</a>.</p>							
 						</div>
 					</div>
 					</div>

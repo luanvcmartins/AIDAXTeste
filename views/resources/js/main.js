@@ -54,23 +54,26 @@ $(function() {
 			
 			//We start by creating a feedback alert for the user:
 			swal({
-					title: "Importing users.",
-					showCancelButton: false,
-					html:"<span id='txt'>Reading file.</span><br><div class='progress'><div id='pImporting' class='determinate' style='width: 0%'></div></div>",
-					useRejections: false,
-					allowOutsideClick: false,
-					allowEscapeKey: false,
-					allowEnterKey: false
-				});
+				title: "Importing users.",
+				showCancelButton: false,
+				showConfirmButton: false,
+				html:"<span id='txt'>Reading file.</span><br><div class='progress'><div id='pImporting' class='determinate' style='width: 0%'></div></div>",
+				useRejections: false,
+				allowOutsideClick: false,
+				allowEscapeKey: false,
+				allowEnterKey: false,
+			});
 				
 			//For this particular file (well, any file below 1 MB) this will be pretty fast, 
 			//but it's important to report anyway:
 			reader.onprogress = function(e) {
 				if (e.lengthComputable) {
-					$("#pImporting").css("width", (e.loaded / e.total * 100)+"%");
+					var progress = (e.loaded / e.total * 100)+"%";
+					$("#pImporting").css("width", progress);
+					$("#txt").text(progress);
 				}
 			};
-				
+			
 			//This is the event which will be called after the file is loaded:
 			reader.onload = function(progressEvent){
 				$("#txt").text("Importing users");
@@ -82,7 +85,10 @@ $(function() {
 				var lines = this.result.split('\n'),
 					attr = [],
 					delimiter = $("#delimiter").val(),
-					header = $("#header").is(':checked');
+					header = $("#header").is(':checked'),
+					lastRequest = 0,
+					speed = parseInt($("#speed").val());
+					
 					
 				//If the file doesn't provide a header we will create one now:
 				if (header === false) {
@@ -93,7 +99,7 @@ $(function() {
 				
 				//We need to read every line from the file to add all the users:
 				for(var line = 0; line < lines.length; line++){
-					if (lines[line].trim() === '') { continue; }
+					if (lines[line].trim() === '') { clientSideAIDAXRequest(line, lines.length, lastRequest, undefined, undefined);	continue; }
 					
 					
 					//We split the content of the line to get the properties:
@@ -115,22 +121,44 @@ $(function() {
 					}
 					
 					//Using the first property as a id we can add the user calling this AIDAX function:
-					
-					ax.user({
-						id:content[0],
-						properties : userProperties
-					});
-					
-					$("#pImporting").css("width", (lines.length / line * 100)+"%");
+					lastRequest += speed;
+					clientSideAIDAXRequest(line, lines.length, lastRequest, content[0], userProperties);					
 				}
-				
-				swal("Success!", "This file has been imported correctly.", "success");
 			};
 			
 			//Let's read the file as text:
 			reader.readAsText(selectedFile);
 			selectedFile = undefined;
 		}, 
+		
+		/**
+		 * This function waits a few moments and calls the AIDAX's user function to insert the user.
+		 *
+		 * - currentItem: used to display the progress. The first item will always be before the third, 
+		 * for example, so we won't have to deal syncing the progress. We can trust the line number for this.
+		 * - triggerTime: used to tell us how much time we need to wait before calling the function.
+		 * - userId: the current user id.
+		 * - userProperties: the properties to assign to this user.
+		 */
+		clientSideAIDAXRequest = function(currentItem, totalItens, triggerTime, userId, userProperties){
+			console.log("starting in " + triggerTime);
+			setTimeout(function(){
+				//After waiting we can call the function normally:
+				if (userId !== undefined){
+					ax.user({
+						id: userId,
+						properties : userProperties
+					});
+				}
+				
+				//Inform the user about the progress:
+				var progress = parseFloat(currentItem / totalItens * 100).toFixed(2)+"%";
+				$("#pImporting").css("width", progress);
+					$("#txt").text(progress);
+				if (currentItem+1 == totalItens)
+					swal("Success!", "This file has been imported correctly.", "success");
+			}, triggerTime);
+		},
 		
 		/**
 		 * This function is used to process the file on the server side, to do this
@@ -144,7 +172,8 @@ $(function() {
 				useRejections: false,
 				allowOutsideClick: false,
 				allowEscapeKey: false,
-				allowEnterKey: false
+				allowEnterKey: false,
+				showConfirmButton: false
 			});
 			
 			//This is the data we will submit to the server:
@@ -152,6 +181,7 @@ $(function() {
 			formData.append('csvFile', csvFile);
 			formData.append('header', $("#header").is(":checked"));
 			formData.append('delimiter', $("#delimiter").val());
+			formData.append('speed', parseInt($("#speed").val()));
 			
 			//We submit the form with Ajax:
 			$.ajax({
@@ -166,20 +196,28 @@ $(function() {
 					xhr.upload.addEventListener("progress", function(evt){
 							if (evt.lengthComputable) {
 								$("#pImporting").css("width",  evt.loaded / evt.total * 100 + "%");
+								if (evt.loaded === evt.total) { 
+									$("#pImporting").removeClass("determinate").addClass("indeterminate"); 
+									$("#txt").text("Please wait while the server process your request.  This could take awhile depending on the speed you chose.");
+								}
 							}
 						}, false);
 					return xhr;
 				},
 			}).done(function(res){
-				console.log(res);
+				//The server will return a JSON informing about the results:
 				if (res.result){
-					swal("Success!", "The csv file was uploaded correctly and all users have been imported to AIDAX.", "success");
+					if (res.success > 0) {
+						swal("Success!", "The csv file was uploaded correctly and "+res.success+" users have been imported to AIDAX (while "+res.fail +" failed).", "success");
+					} else {
+						swal("Oops, looks like something went wrong!", "The csv file was uploaded correctly, but no user have been imported to AIDAX (while "+res.fail +" failed).", "error");
+					}
 				} else {
 					swal("Oops, something went wrong.", "Your file was uploaded correctly but we weren't able to import your data to AIDAX.", "error");
 				}
 			}).error(function(){
 				swal("Oops, something went wrong.", "Please check your internet connection and try again later.", "error");
-			});
+			}).ajaxError(function(){swal("Oops, something went wrong.", "Please check your internet connection and try again later.", "error");});
 		},
 		
 		//A reference to the selected file.
